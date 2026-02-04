@@ -1,4 +1,3 @@
-# models/fused_la.py 融合算子版LinearAttention（继承nn.Module）
 import torch
 import torch.nn as nn
 import torch.autograd as autograd

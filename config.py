@@ -1,9 +1,9 @@
-# config.py 测试参数统一配置
+# config.py
 
 # 随机种子（保证可复现）
 SEED = 42
 # 模型基础参数
-D_MODEL = 8
+D_MODEL = 512
 BLOCK_SIZE = 64  # 融合算子分块大小
 # 测试参数
 BATCH_SIZE = 2

@@ -4,7 +4,9 @@ from models import (
     FusedLightningAttention, 
     NavieLightningAttention,
     FusedRetention,
-    NavieRetention
+    NavieRetention,
+    FusedTTT,
+    NavieTTT
 )
 from utils import get_device, set_seed, general_grad_check, measure_model_performance
 from config import *
@@ -13,17 +15,31 @@ def main():
     # 1. 初始化设备和随机种子
     device = get_device()
     set_seed(device)
-    print(f"📌 运行设备：{device}")
+    display_device = "cpu"
+    try:
+        if "cuda" in str(device).lower() and torch.cuda.is_available():
+            try:
+                display_device = torch.cuda.get_device_name(device)
+            except Exception:
+                try:
+                    idx = int(str(device).split(":")[-1])
+                    display_device = torch.cuda.get_device_name(idx)
+                except Exception:
+                    display_device = torch.cuda.get_device_name(torch.cuda.current_device())
+    except Exception:
+        display_device = "cpu"
+    print(f"📌 运行设备：{display_device}")
+
     print(f"📌 测试参数：batch_size={BATCH_SIZE}, d_model={D_MODEL}, block_size={BLOCK_SIZE}")
     print("-" * 90)
 
     # 2. 定义待测试模型映射【核心：新增模型只需在这里添加键值对】
     # 格式：{模型名称: (模型类, 模型初始化参数字典)}
     MODEL_MAP = {
-        #"NavieLightningAttention": (NavieLightningAttention, {"d_model": D_MODEL}),
-        #"FusedLightningAttention": (FusedLightningAttention, {"d_model": D_MODEL, "block_size": BLOCK_SIZE})
-        "NavieRetention": (NavieRetention, {"d_model": D_MODEL, "gamma": 0.9}),
-        "FusedRetention": (FusedRetention, {"d_model": D_MODEL, "gamma": 0.9, "block_size": BLOCK_SIZE})
+        "NavieLightningAttention": (NavieLightningAttention, {"d_model": D_MODEL}),
+        "FusedLightningAttention": (FusedLightningAttention, {"d_model": D_MODEL, "block_size": BLOCK_SIZE}),
+        #"NavieRetention": (NavieRetention, {"d_model": D_MODEL, "gamma": 0.9}),
+        #"FusedRetention": (FusedRetention, {"d_model": D_MODEL, "gamma": 0.9, "block_size": BLOCK_SIZE}),
     }
 
     # 3. 通用梯度校验（短序列，支持任意模型）
