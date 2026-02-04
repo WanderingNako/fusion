@@ -4,9 +4,7 @@ from models import (
     FusedLightningAttention, 
     NavieLightningAttention,
     FusedRetention,
-    NavieRetention,
-    FusedTTT,
-    NavieTTT
+    NavieRetention
 )
 from utils import get_device, set_seed, general_grad_check, measure_model_performance
 from config import *
